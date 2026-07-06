@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  role      String   // Admin, Tenant
+  fullname  String
+  email     String   @unique
+  phone     String
+  password  String   @default("") // Adding password for real auth
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  rentalApplications RentalApplication[]
+  tenants            Tenant[]
+  notifications      Notification[]
+}
+
+model Facility {
+  id        String   @id @default(uuid())
+  name      String
+  rooms     Room[]   @relation("RoomFacilities")
+}
+
+model Room {
+  id          String   @id @default(uuid())
+  room_number String   @unique
+  price       Int
+  description String
+  status      String   // Kosong, Terisi, Dipesan
+  image       String?
+
+  facilities  Facility[] @relation("RoomFacilities")
+  rentalApplications RentalApplication[]
+  tenants            Tenant[]
+}
+
+model RentalApplication {
+  id         String   @id @default(uuid())
+  user_id    String
+  room_id    String
+  start_date String
+  duration   Int
+  ktp_image  String?
+  status     String   // Pending, Approved, Rejected
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id])
+  room       Room     @relation(fields: [room_id], references: [id])
+  tenant     Tenant?
+}
+
+model Tenant {
+  id             String   @id @default(uuid())
+  application_id String   @unique
+  room_id        String
+  user_id        String
+  check_in       String
+  status         String   @default("Active") // Active, Inactive
+
+  application    RentalApplication @relation(fields: [application_id], references: [id])
+  room           Room              @relation(fields: [room_id], references: [id])
+  user           User              @relation(fields: [user_id], references: [id])
+  payments       Payment[]
+}
+
+model Payment {
+  id           String   @id @default(uuid())
+  tenant_id    String
+  amount       Int
+  payment_date String?
+  proof_image  String?
+  status       String   // Belum Bayar, Menunggu Verifikasi, Lunas, Ditolak
+  month_for    String
+
+  tenant       Tenant   @relation(fields: [tenant_id], references: [id])
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  user_id    String
+  title      String
+  message    String
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id])
+}
+
+model Expense {
+  id           String   @id @default(uuid())
+  description  String
+  category     String
+  amount       Int
+  expense_date String
+  created_at   DateTime @default(now())
+}
