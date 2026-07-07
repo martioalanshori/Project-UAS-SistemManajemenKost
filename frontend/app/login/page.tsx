@@ -15,6 +15,7 @@ import { Suspense } from 'react';
 function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login, currentUser } = useAppContext();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,22 +23,25 @@ function LoginContent() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await login(email, password);
       Swal.fire({
         icon: 'success',
         title: 'Login Berhasil',
         text: 'Selamat datang kembali!',
-        timer: 1500,
-        showConfirmButton: false
+        confirmButtonText: 'OK'
       });
     } catch (error: any) {
       const msg = error.response?.data?.error || 'Gagal login. Periksa email dan password Anda.';
       Swal.fire({
         icon: 'error',
         title: 'Gagal Login',
-        text: msg
+        text: msg,
+        confirmButtonText: 'Tutup'
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,7 +99,9 @@ function LoginContent() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">Sign In</Button>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Memproses...' : 'Sign In'}
+            </Button>
             <div className="text-sm text-center text-muted-foreground">
               Belum punya akun?{' '}
               <Link href="/register" className="text-primary hover:underline">

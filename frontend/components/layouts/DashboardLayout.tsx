@@ -20,8 +20,9 @@ import { useRouter } from 'next/navigation';
 
 interface SidebarItem {
   name: string;
-  href: string;
-  icon: React.ReactNode;
+  href?: string;
+  icon?: React.ReactNode;
+  isCategory?: boolean;
 }
 
 interface DashboardLayoutProps {
@@ -51,16 +52,22 @@ export function DashboardLayout({ children, role, sidebarItems }: DashboardLayou
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
           {sidebarItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                pathname === item.href ? 'bg-muted text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              {item.icon}
-              {item.name}
-            </Link>
+            item.isCategory ? (
+              <div key={item.name} className="mt-4 mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                {item.name}
+              </div>
+            ) : (
+              <Link
+                key={item.name}
+                href={item.href!}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                  pathname === item.href ? 'bg-muted text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                {item.icon}
+                {item.name}
+              </Link>
+            )
           ))}
         </nav>
       </div>
@@ -97,7 +104,7 @@ export function DashboardLayout({ children, role, sidebarItems }: DashboardLayou
         <SidebarContent />
       </div>
       <div className="flex flex-col">
-        <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
+        <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 lg:hidden">
           <Sheet>
             <SheetTrigger
               render={

@@ -107,8 +107,7 @@ export default function LandingPage() {
               <div className="text-xs font-bold mb-1">Cari Kamar</div>
               <Input 
                 name="q"
-                variant="ghost" 
-                className="h-6 p-0 border-0 focus-visible:ring-0 shadow-none text-muted-foreground bg-transparent text-base" 
+                className="h-6 p-0 border-0 focus-visible:ring-0 shadow-none text-muted-foreground placeholder:text-muted-foreground/60 w-full" 
                 placeholder="Masukkan nomor kamar atau deskripsi..." 
               />
             </div>

@@ -21,7 +21,6 @@ import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 
 export default function TenantLayout({ children }: { children: React.ReactNode }) {
-  const { state } = useAppContext();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
 

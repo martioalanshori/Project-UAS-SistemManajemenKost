@@ -25,17 +25,17 @@ async function main() {
   // 2. Create Users
   const admin = await prisma.user.upsert({
     where: { email: 'admin@kost.com' },
-    update: {},
+    update: { password: adminPassword },
     create: { role: 'Admin', fullname: 'Admin Utama', email: 'admin@kost.com', phone: '08111111111', password: adminPassword }
   });
   const owner = await prisma.user.upsert({
     where: { email: 'owner@kost.com' },
-    update: {},
+    update: { password: adminPassword },
     create: { role: 'Admin', fullname: 'Bapak Kost', email: 'owner@kost.com', phone: '08222222222', password: adminPassword }
   });
   const tenantUser = await prisma.user.upsert({
     where: { email: 'budi@gmail.com' },
-    update: {},
+    update: { password: tenantPassword },
     create: { role: 'Tenant', fullname: 'Budi Santoso', email: 'budi@gmail.com', phone: '08333333333', password: tenantPassword }
   });
 

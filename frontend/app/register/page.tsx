@@ -46,8 +46,7 @@ export default function RegisterPage() {
         icon: 'success',
         title: 'Pendaftaran Berhasil',
         text: 'Akun Anda berhasil dibuat. Silakan login.',
-        timer: 2000,
-        showConfirmButton: false
+        confirmButtonText: 'OK'
       }).then(() => {
         router.push('/login');
       });

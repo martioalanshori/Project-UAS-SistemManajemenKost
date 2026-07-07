@@ -59,20 +59,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const fetchData = async (user?: User) => {
     try {
-      const isAuth = !!user || !!localStorage.getItem('token');
+      let activeUser = user;
+      if (!activeUser && typeof window !== 'undefined') {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          try { activeUser = JSON.parse(userStr); } catch(e) {}
+        }
+      }
+      const isAuth = !!activeUser || !!localStorage.getItem('token');
+      const safeGet = (url: string) => api.get(url).catch(err => {
+        return { data: [] };
+      });
+
       const requests: Promise<any>[] = [
-        api.get(`/rooms`),
-        api.get(`/facilities`),
+        safeGet(`/rooms`),
+        safeGet(`/facilities`),
       ];
       
       if (isAuth) {
         requests.push(
-          api.get(`/applications`),
-          api.get(`/tenants`),
-          api.get(`/payments`),
-          api.get(`/notifications`),
-          api.get(`/expenses`)
+          safeGet(`/applications`),
+          safeGet(`/tenants`),
+          safeGet(`/payments`),
+          safeGet(`/notifications`)
         );
+        if (activeUser?.role === 'Admin') {
+          requests.push(safeGet(`/expenses`));
+        } else {
+          requests.push(Promise.resolve({ data: [] }));
+        }
       } else {
         requests.push(Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }));
       }
@@ -81,8 +96,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       setState(prev => ({
         ...prev,
-        rooms: roomsRes.data,
-        facilities: facilitiesRes.data,
+        rooms: roomsRes.data || [],
+        facilities: facilitiesRes.data || [],
         applications: appsRes.data || [],
         tenants: tenantsRes.data || [],
         payments: paymentsRes.data || [],

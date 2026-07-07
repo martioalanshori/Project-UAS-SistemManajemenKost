@@ -91,10 +91,8 @@ export default function ExpensesManagementPage() {
           <p className="text-muted-foreground">Catat dan kelola pengeluaran operasional Kost.</p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" /> Tambah Pengeluaran
-            </Button>
+          <DialogTrigger render={<Button />}>
+            <Plus className="mr-2 h-4 w-4" /> Tambah Pengeluaran
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
