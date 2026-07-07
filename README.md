@@ -1,97 +1,364 @@
 # Kost Management System
 
-Kost Management System adalah aplikasi berbasis web yang dirancang untuk membantu pemilik/admin mengelola kos-kosan dan memudahkan penyewa dalam melakukan pengajuan, pembayaran, serta menerima informasi. Sistem ini dibangun dengan arsitektur modern menggunakan **Next.js** di sisi _frontend_ dan **Express.js + Prisma** di sisi _backend_.
+Kost Management System adalah aplikasi berbasis web yang dirancang untuk membantu pemilik/admin dalam mengelola operasional kos secara digital, sekaligus memudahkan penyewa dalam melakukan pengajuan sewa, pembayaran tagihan, serta memperoleh informasi terkait tempat tinggalnya.
 
-## 🌟 Fitur Utama
-
-### Untuk Admin
-* **Dashboard Cerdas**: Ringkasan jumlah kamar, pendapatan, pengeluaran, dan kalkulasi **Laba Bersih** otomatis beserta grafik interaktif.
-* **Manajemen Kamar & Fasilitas**: Tambah, edit, hapus data kamar dan fasilitas yang tersedia.
-* **Manajemen Penyewa & Pengajuan**: Memantau pengajuan sewa masuk (setujui/tolak) dan daftar penghuni aktif.
-* **Manajemen Pembayaran**: Verifikasi bukti transfer yang diunggah penyewa.
-* **Laporan Keuangan (Pengeluaran)**: Pencatatan tagihan listrik, air, perawatan, dll, yang akan memotong pendapatan kotor menjadi laba bersih.
-* **Manajemen Pengguna**: Kelola akun pengguna dan _role_ (Admin/Tenant).
-
-### Untuk Penyewa (Tenant)
-* **Pencarian Kamar**: Katalog kamar yang tersedia beserta deskripsi, harga, dan fasilitas.
-* **Dashboard Penyewa**: Informasi kamar yang disewa dan notifikasi.
-* **Pengajuan Sewa**: Sistem *booking* kamar secara daring.
-* **Pembayaran Tagihan**: Upload bukti pembayaran bulanan.
-* **Profil Pengguna**: Pengaturan profil (nama, no. hp, foto/avatar, dan ubah password).
+Sistem ini dibangun menggunakan arsitektur modern dengan **Next.js** sebagai frontend, **Express.js** sebagai backend REST API, **Prisma ORM** sebagai ORM, dan **MySQL** sebagai database utama.
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+# 🌟 Fitur Utama
 
-* **Frontend**: Next.js (React), Tailwind CSS, Shadcn UI (Radix UI), Recharts (Grafik), Axios, SweetAlert2.
-* **Backend**: Node.js, Express.js, Prisma ORM, bcrypt (Keamanan Password).
-* **Database**: SQLite (via Prisma).
+## Untuk Admin
+
+- **Dashboard Cerdas**
+  - Ringkasan jumlah kamar.
+  - Statistik penyewa aktif.
+  - Total pendapatan.
+  - Total pengeluaran.
+  - Perhitungan **Laba Bersih** secara otomatis.
+  - Grafik statistik menggunakan Recharts.
+
+- **Manajemen Kamar**
+  - Tambah kamar.
+  - Edit data kamar.
+  - Hapus kamar.
+  - Mengatur status kamar (tersedia/terisi).
+
+- **Manajemen Fasilitas**
+  - Menambah fasilitas.
+  - Mengubah fasilitas.
+  - Menghapus fasilitas.
+
+- **Manajemen Pengajuan**
+  - Melihat pengajuan penyewa.
+  - Menyetujui pengajuan.
+  - Menolak pengajuan.
+
+- **Manajemen Penyewa**
+  - Melihat daftar penghuni.
+  - Mengelola data penyewa.
+
+- **Manajemen Pembayaran**
+  - Verifikasi bukti pembayaran.
+  - Mengubah status pembayaran.
+
+- **Laporan Keuangan**
+  - Mencatat pengeluaran.
+  - Mengelola biaya listrik.
+  - Mengelola biaya air.
+  - Mengelola biaya perawatan.
+  - Menghasilkan laba bersih.
+
+- **Manajemen Pengguna**
+  - Mengelola akun pengguna.
+  - Mengubah role pengguna.
+  - Menghapus akun pengguna.
 
 ---
 
-## 🚀 Tata Cara Instalasi
+## Untuk Penyewa (Tenant)
 
-Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi secara lokal di mesin Anda.
+- Dashboard penyewa.
+- Melihat daftar kamar yang tersedia.
+- Detail kamar beserta fasilitas.
+- Mengajukan penyewaan kamar.
+- Upload bukti pembayaran bulanan.
+- Melihat status pembayaran.
+- Notifikasi.
+- Mengubah profil.
+- Mengubah password.
+- Mengunggah foto profil.
 
-### 1. Persiapan
-Pastikan Anda sudah menginstal **Node.js** (versi 16 atau yang lebih baru) di sistem Anda.
-Buka terminal dan navigasikan ke direktori utama proyek ini:
+---
+
+# 🛠️ Teknologi yang Digunakan
+
+## Frontend
+
+- Next.js
+- React.js
+- Tailwind CSS
+- Shadcn UI
+- Radix UI
+- Axios
+- Recharts
+- SweetAlert2
+
+## Backend
+
+- Node.js
+- Express.js
+- Prisma ORM
+- bcrypt
+
+## Database
+
+- MySQL
+
+---
+
+# 📁 Struktur Proyek
+
+```
+kost-management-system/
+│
+├── backend/
+│   ├── prisma/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── uploads/
+│   ├── package.json
+│   └── .env
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
+└── README.md
+```
+
+---
+
+# 🚀 Instalasi
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/username/kost-management-system.git
+```
+
+Masuk ke folder project.
+
 ```bash
 cd kost-management-system
 ```
 
-### 2. Setup Backend
-Backend berjalan di port `5000` dan mengelola *database* serta *business logic*.
+---
 
-1. Masuk ke direktori backend:
-   ```bash
-   cd backend
-   ```
-2. Instal semua dependensi:
-   ```bash
-   npm install
-   ```
-3. Sinkronisasi skema *database* menggunakan Prisma (akan membuat file `dev.db` untuk SQLite lokal) dan menghasilkan Prisma Client:
-   ```bash
-   npx prisma db push
-   npx prisma generate
-   ```
-4. Jalankan server *backend*:
-   ```bash
-   npm run dev
-   ```
-   > Server backend sekarang berjalan di `http://localhost:5000`.
+# ⚙️ Setup Database (MySQL)
 
-### 3. Setup Frontend
-Frontend berjalan di port `3000` dan menyediakan antarmuka bagi pengguna.
-Buka **terminal/tab baru** agar server backend tetap berjalan.
+Pastikan MySQL Server sudah berjalan.
 
-1. Masuk ke direktori frontend:
-   ```bash
-   cd frontend
-   ```
-2. Instal semua dependensi:
-   ```bash
-   npm install
-   ```
-3. Jalankan *development server*:
-   ```bash
-   npm run dev
-   ```
-   > Aplikasi frontend sekarang dapat diakses di browser melalui `http://localhost:3000`.
+Buat database baru.
+
+```sql
+CREATE DATABASE kost_management;
+```
 
 ---
 
-## 🔐 Akun Akses Default
+# ⚙️ Setup Backend
 
-Saat pertama kali dijalankan, sistem mungkin tidak memiliki akun admin. Anda dapat melakukan Registrasi melalui antarmuka web, kemudian menggunakan salah satu alat manajemen SQLite (seperti *Prisma Studio*) untuk mengubah `role` akun Anda menjadi `Admin`.
+Masuk ke folder backend.
 
-Untuk membuka Prisma Studio (GUI database):
+```bash
+cd backend
+```
+
+Install dependency.
+
+```bash
+npm install
+```
+
+Buat file `.env`.
+
+```env
+DATABASE_URL="mysql://root:password@localhost:3306/kost_management"
+JWT_SECRET=your_secret_key
+PORT=5000
+```
+
+> **Catatan**
+>
+> Jika menggunakan XAMPP/Laragon dengan user `root` tanpa password:
+>
+> ```env
+> DATABASE_URL="mysql://root:@localhost:3306/kost_management"
+> ```
+
+Sinkronisasi database menggunakan Prisma.
+
+```bash
+npx prisma db push
+```
+
+Generate Prisma Client.
+
+```bash
+npx prisma generate
+```
+
+Jalankan backend.
+
+```bash
+npm run dev
+```
+
+Backend berjalan pada:
+
+```
+http://localhost:5000
+```
+
+---
+
+# 💻 Setup Frontend
+
+Buka terminal baru.
+
+Masuk ke folder frontend.
+
+```bash
+cd frontend
+```
+
+Install dependency.
+
+```bash
+npm install
+```
+
+Jalankan aplikasi.
+
+```bash
+npm run dev
+```
+
+Frontend berjalan pada:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🔐 Akun Admin
+
+Saat pertama kali dijalankan, sistem belum memiliki akun Admin.
+
+Langkah-langkah:
+
+1. Registrasi akun melalui halaman Register.
+2. Jalankan Prisma Studio.
+
 ```bash
 cd backend
 npx prisma studio
 ```
-Lalu ubah kolom `role` pada pengguna yang baru didaftarkan dari `Tenant` menjadi `Admin`.
+
+3. Buka tabel **User**.
+4. Ubah nilai field:
+
+```
+role
+```
+
+dari
+
+```
+Tenant
+```
+
+menjadi
+
+```
+Admin
+```
+
+Kemudian login kembali menggunakan akun tersebut.
 
 ---
-_Aplikasi ini dikembangkan untuk memudahkan pengelolaan properti kos-kosan secara digital, efektif, dan efisien._
+
+# 🗄️ Prisma Commands
+
+Generate Prisma Client.
+
+```bash
+npx prisma generate
+```
+
+Sinkronisasi schema ke database.
+
+```bash
+npx prisma db push
+```
+
+Membuka Prisma Studio.
+
+```bash
+npx prisma studio
+```
+
+Reset database.
+
+```bash
+npx prisma migrate reset
+```
+
+---
+
+# 📊 Modul Sistem
+
+### Admin
+
+- Dashboard
+- Manajemen Kamar
+- Manajemen Fasilitas
+- Manajemen Penyewa
+- Manajemen Pengajuan
+- Manajemen Pembayaran
+- Manajemen Pengeluaran
+- Manajemen User
+- Profil
+
+### Tenant
+
+- Dashboard
+- Daftar Kamar
+- Detail Kamar
+- Pengajuan Sewa
+- Pembayaran
+- Notifikasi
+- Profil
+
+---
+
+# 🔒 Keamanan
+
+- Password disimpan menggunakan **bcrypt hashing**.
+- Validasi data dilakukan pada sisi backend.
+- Role Based Access Control (RBAC) untuk Admin dan Tenant.
+- Prisma ORM digunakan untuk meminimalkan risiko SQL Injection.
+
+---
+
+# 📈 Arsitektur
+
+```
+Frontend (Next.js)
+        │
+     Axios API
+        │
+Backend (Express.js)
+        │
+   Prisma ORM
+        │
+     MySQL Database
+```
+
+---
+
+# 👨‍💻 Pengembang
+
+Aplikasi ini dikembangkan sebagai sistem informasi manajemen kos berbasis web untuk membantu digitalisasi proses administrasi, pengelolaan kamar, penyewa, pembayaran, serta laporan keuangan secara efektif dan efisien.
+
+---
+
+## 📄 Lisensi
+
+Project ini dibuat untuk kebutuhan pembelajaran, pengembangan, dan portofolio.
