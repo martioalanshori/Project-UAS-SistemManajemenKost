@@ -76,17 +76,14 @@ export default function AdminApplications() {
           </TableHeader>
           <TableBody>
             {applications.map((app: any, idx: number) => {
-              const user = users.find((u: any) => u.id === app.user_id);
-              const room = rooms.find((r: any) => r.id === app.room_id);
-              
               return (
                 <TableRow key={app.id}>
                   <TableCell className="font-medium">{idx + 1}</TableCell>
                   <TableCell>
-                    <div className="font-medium">{user?.fullname || 'Unknown User'}</div>
-                    <div className="text-xs text-muted-foreground">{user?.email}</div>
+                    <div className="font-medium">{app.user?.fullname || 'Unknown User'}</div>
+                    <div className="text-xs text-muted-foreground">{app.user?.email}</div>
                   </TableCell>
-                  <TableCell>Kamar {room?.room_number}</TableCell>
+                  <TableCell>Kamar {app.room?.room_number}</TableCell>
                   <TableCell>{new Date(app.start_date).toLocaleDateString('id-ID')}</TableCell>
                   <TableCell>{app.duration}</TableCell>
                   <TableCell>

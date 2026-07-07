@@ -1,22 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole, userSelectFields } = require('../lib/middleware');
 
 const router = express.Router();
-
 // GET all users (excluding password)
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        phone: true,
-        role: true,
-        avatar: true,
-        createdAt: true
-      }
+      select: userSelectFields
     });
     res.json(users);
   } catch (error) {
@@ -26,19 +18,11 @@ router.get('/', async (req, res) => {
 });
 
 // GET single user (excluding password)
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        phone: true,
-        role: true,
-        avatar: true,
-        createdAt: true
-      }
+      select: userSelectFields
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json(user);
@@ -49,11 +33,20 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create user (Register)
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { fullname, email, phone, role, password, avatar } = req.body;
     
-    const hashedPassword = await bcrypt.hash(password || 'defaultpass', 10);
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required' });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
         fullname,
@@ -62,10 +55,10 @@ router.post('/', async (req, res) => {
         role: role || 'Tenant',
         avatar,
         password: hashedPassword
-      }
+      },
+      select: userSelectFields
     });
-    const { password: _, ...userData } = user;
-    res.status(201).json(userData);
+    res.status(201).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to register user' });
@@ -73,9 +66,17 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update user (fullname, email, phone, role, password, avatar)
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { fullname, email, phone, role, password, avatar } = req.body;
+    
+    if (email) {
+      const existingUser = await prisma.user.findUnique({ where: { email } });
+      if (existingUser && existingUser.id !== req.params.id) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+    }
+
     const data = {};
     if (fullname !== undefined) data.fullname = fullname;
     if (email !== undefined) data.email = email;
@@ -86,10 +87,10 @@ router.put('/:id', async (req, res) => {
 
     const user = await prisma.user.update({
       where: { id: req.params.id },
-      data
+      data,
+      select: userSelectFields
     });
-    const { password: _, ...userData } = user;
-    res.json(userData);
+    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update user' });
@@ -97,7 +98,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE user
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     await prisma.user.delete({
       where: { id: req.params.id }

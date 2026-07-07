@@ -44,8 +44,6 @@ export function RoomCard({ room }: RoomCardProps) {
             Kamar {room.room_number}
           </h3>
           <div className="flex items-center gap-1 text-sm">
-            <Star className="h-3.5 w-3.5 fill-foreground" />
-            <span className="font-medium">4.9</span>
           </div>
         </div>
         

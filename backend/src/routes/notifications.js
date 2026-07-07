@@ -2,13 +2,14 @@ const express = require('express');
 const prisma = require('../lib/prisma');
 const router = express.Router();
 
-// GET all notifications (optional ?user_id= filter)
-router.get('/', async (req, res) => {
+const { authenticateToken, userSelectFields } = require('../lib/middleware');
+
+// GET all notifications (filtered by authenticated user)
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const where = req.query.user_id ? { user_id: req.query.user_id } : {};
     const notifications = await prisma.notification.findMany({
-      where,
-      include: { user: true },
+      where: { user_id: req.user.id },
+      include: { user: { select: userSelectFields } },
       orderBy: { created_at: 'desc' }
     });
     res.json(notifications);
@@ -19,11 +20,11 @@ router.get('/', async (req, res) => {
 });
 
 // GET single notification
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const notification = await prisma.notification.findUnique({
       where: { id: req.params.id },
-      include: { user: true }
+      include: { user: { select: userSelectFields } }
     });
     if (!notification) return res.status(404).json({ error: 'Notification not found' });
     res.json(notification);
@@ -34,7 +35,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create notification
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { user_id, title, message } = req.body;
     if (!user_id || !title || !message) {
@@ -51,7 +52,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT mark as read
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const notification = await prisma.notification.update({
       where: { id: req.params.id },
@@ -65,7 +66,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE notification
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     await prisma.notification.delete({ where: { id: req.params.id } });
     res.json({ message: 'Notification deleted' });

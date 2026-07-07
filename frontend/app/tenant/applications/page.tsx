@@ -90,7 +90,7 @@ export default function TenantApplications() {
             })}
             {myApplications.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
                   Anda belum memiliki riwayat pengajuan sewa.
                 </TableCell>
               </TableRow>

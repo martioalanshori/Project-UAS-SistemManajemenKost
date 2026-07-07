@@ -1,5 +1,6 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole } = require('../lib/middleware.js');
 
 const router = express.Router();
 
@@ -29,9 +30,13 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create facility
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'name is required' });
+    }
     
     const facility = await prisma.facility.create({
       data: { name }
@@ -44,9 +49,14 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update facility
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'name is required' });
+    }
+    
     const facility = await prisma.facility.update({
       where: { id: req.params.id },
       data: { name }
@@ -59,7 +69,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE facility
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     await prisma.facility.delete({
       where: { id: req.params.id }

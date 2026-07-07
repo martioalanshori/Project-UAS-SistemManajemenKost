@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import api from '@/lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,7 +16,8 @@ export default function RegisterPage() {
     fullname: '',
     email: '',
     phone: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -26,10 +27,21 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validasi Gagal',
+        text: 'Password dan Konfirmasi Password tidak cocok'
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      const { confirmPassword, ...dataToSubmit } = formData;
+      await api.post('/auth/register', dataToSubmit);
       Swal.fire({
         icon: 'success',
         title: 'Pendaftaran Berhasil',
@@ -77,6 +89,10 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" value={formData.password} onChange={handleChange} placeholder="Masukkan Password" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+              <Input id="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} placeholder="Ulangi Password" required />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">

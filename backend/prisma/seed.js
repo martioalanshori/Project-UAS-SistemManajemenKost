@@ -1,37 +1,49 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Start seeding...');
 
-  // 1. Create Facilities
-  const facilities = await Promise.all([
-    prisma.facility.create({ data: { name: 'AC' } }),
-    prisma.facility.create({ data: { name: 'WiFi' } }),
-    prisma.facility.create({ data: { name: 'Kamar Mandi Dalam' } }),
-    prisma.facility.create({ data: { name: 'Kasur' } }),
-    prisma.facility.create({ data: { name: 'Lemari' } }),
-    prisma.facility.create({ data: { name: 'Meja Belajar' } }),
-  ]);
+  // Hash passwords
+  const adminPassword = await bcrypt.hash('admin123', 10);
+  const tenantPassword = await bcrypt.hash('password', 10);
+
+  // 1. Create Facilities (using upsert requires a unique field. We'll use findFirst/create since name is not unique)
+  const facilitiesData = ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Kasur', 'Lemari', 'Meja Belajar'];
+  const facilities = await Promise.all(
+    facilitiesData.map(async (name) => {
+      let facility = await prisma.facility.findFirst({ where: { name } });
+      if (!facility) {
+        facility = await prisma.facility.create({ data: { name } });
+      }
+      return facility;
+    })
+  );
   const facilityIds = facilities.map(f => ({ id: f.id }));
 
   // 2. Create Users
-  const admin = await prisma.user.create({
-    data: { role: 'Admin', fullname: 'Admin Utama', email: 'admin@kost.com', phone: '08111111111' }
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@kost.com' },
+    update: {},
+    create: { role: 'Admin', fullname: 'Admin Utama', email: 'admin@kost.com', phone: '08111111111', password: adminPassword }
   });
-  const owner = await prisma.user.create({
-    data: { role: 'Admin', fullname: 'Bapak Kost', email: 'owner@kost.com', phone: '08222222222' }
+  const owner = await prisma.user.upsert({
+    where: { email: 'owner@kost.com' },
+    update: {},
+    create: { role: 'Admin', fullname: 'Bapak Kost', email: 'owner@kost.com', phone: '08222222222', password: adminPassword }
   });
-  const tenantUser = await prisma.user.create({
-    data: { role: 'Tenant', fullname: 'Budi Santoso', email: 'budi@gmail.com', phone: '08333333333' }
-  });
-  const guestUser = await prisma.user.create({
-    data: { role: 'Guest', fullname: 'Calon Penyewa', email: 'calon@gmail.com', phone: '08444444444' }
+  const tenantUser = await prisma.user.upsert({
+    where: { email: 'budi@gmail.com' },
+    update: {},
+    create: { role: 'Tenant', fullname: 'Budi Santoso', email: 'budi@gmail.com', phone: '08333333333', password: tenantPassword }
   });
 
   // 3. Create Rooms
-  const room1 = await prisma.room.create({
-    data: {
+  const room1 = await prisma.room.upsert({
+    where: { room_number: '101' },
+    update: {},
+    create: {
       room_number: '101',
       price: 1500000,
       description: 'Kamar luas di lantai 1 dengan pencahayaan alami yang baik.',
@@ -40,8 +52,10 @@ async function main() {
       facilities: { connect: facilityIds.slice(0, 5) }
     }
   });
-  const room2 = await prisma.room.create({
-    data: {
+  const room2 = await prisma.room.upsert({
+    where: { room_number: '102' },
+    update: {},
+    create: {
       room_number: '102',
       price: 1500000,
       description: 'Kamar strategis dekat tangga utama.',
@@ -52,6 +66,7 @@ async function main() {
   });
 
   console.log('Seeding finished.');
+
 }
 
 main()

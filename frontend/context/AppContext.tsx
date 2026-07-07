@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import api from '@/lib/api';
 import { User, Room, RentalApplication, Tenant, Payment, Notification, Facility, Expense } from '../types';
 
 interface AppState {
@@ -44,7 +44,6 @@ interface AppContextType extends AppState {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-const API_URL = 'http://localhost:5000/api';
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>({
@@ -58,27 +57,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     expenses: [],
   });
 
-  const fetchData = async () => {
+  const fetchData = async (user?: User) => {
     try {
-      const [roomsRes, facilitiesRes, appsRes, tenantsRes, paymentsRes, notificationsRes, expensesRes] = await Promise.all([
-        axios.get(`${API_URL}/rooms`),
-        axios.get(`${API_URL}/facilities`),
-        axios.get(`${API_URL}/applications`),
-        axios.get(`${API_URL}/tenants`),
-        axios.get(`${API_URL}/payments`),
-        axios.get(`${API_URL}/notifications`),
-        axios.get(`${API_URL}/expenses`),
-      ]);
+      const isAuth = !!user || !!localStorage.getItem('token');
+      const requests: Promise<any>[] = [
+        api.get(`/rooms`),
+        api.get(`/facilities`),
+      ];
+      
+      if (isAuth) {
+        requests.push(
+          api.get(`/applications`),
+          api.get(`/tenants`),
+          api.get(`/payments`),
+          api.get(`/notifications`),
+          api.get(`/expenses`)
+        );
+      } else {
+        requests.push(Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }), Promise.resolve({ data: [] }));
+      }
+
+      const [roomsRes, facilitiesRes, appsRes, tenantsRes, paymentsRes, notificationsRes, expensesRes] = await Promise.all(requests);
 
       setState(prev => ({
         ...prev,
         rooms: roomsRes.data,
         facilities: facilitiesRes.data,
-        applications: appsRes.data,
-        tenants: tenantsRes.data,
-        payments: paymentsRes.data,
-        notifications: notificationsRes.data,
-        expenses: expensesRes.data,
+        applications: appsRes.data || [],
+        tenants: tenantsRes.data || [],
+        payments: paymentsRes.data || [],
+        notifications: notificationsRes.data || [],
+        expenses: expensesRes.data || [],
       }));
     } catch (error) {
       console.error('Failed to fetch data', error);
@@ -86,16 +95,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    fetchData();
+    let currentUser: User | undefined;
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (token && user) {
-      setState(prev => ({ ...prev, currentUser: JSON.parse(user) }));
+    const userStr = localStorage.getItem('user');
+    if (token && userStr) {
+      try {
+        currentUser = JSON.parse(userStr);
+        setState(prev => ({ ...prev, currentUser: currentUser as User }));
+      } catch (e) {
+        console.error(e);
+      }
     }
+    fetchData(currentUser);
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+    const res = await api.post(`/auth/login`, { email, password });
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('user', JSON.stringify(res.data.user));
     setState(prev => ({ ...prev, currentUser: res.data.user }));
@@ -109,7 +124,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addApplication = async (appData: Omit<RentalApplication, 'id' | 'created_at' | 'status'>) => {
     try {
-      await axios.post(`${API_URL}/applications`, appData);
+      await api.post(`/applications`, appData);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -119,10 +134,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const approveApplication = async (id: string) => {
     try {
-      await axios.put(`${API_URL}/applications/${id}`, { status: 'Approved' });
+      await api.put(`/applications/${id}`, { status: 'Approved' });
       const app = state.applications.find(a => a.id === id);
       if (app) {
-        await axios.post(`${API_URL}/tenants`, {
+        await api.post(`/tenants`, {
           application_id: app.id,
           room_id: app.room_id,
           user_id: app.user_id,
@@ -138,7 +153,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const rejectApplication = async (id: string) => {
     try {
-      await axios.put(`${API_URL}/applications/${id}`, { status: 'Rejected' });
+      await api.put(`/applications/${id}`, { status: 'Rejected' });
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -148,7 +163,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addPayment = async (paymentData: Omit<Payment, 'id' | 'status'>) => {
     try {
-      await axios.post(`${API_URL}/payments`, paymentData);
+      await api.post(`/payments`, paymentData);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -158,7 +173,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const verifyPayment = async (id: string) => {
     try {
-      await axios.put(`${API_URL}/payments/${id}`, { status: 'Lunas' });
+      await api.put(`/payments/${id}`, { status: 'Lunas' });
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -168,7 +183,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updatePayment = async (id: string, paymentData: Partial<Payment>) => {
     try {
-      await axios.put(`${API_URL}/payments/${id}`, paymentData);
+      await api.put(`/payments/${id}`, paymentData);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -178,7 +193,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const rejectPayment = async (id: string) => {
     try {
-      await axios.put(`${API_URL}/payments/${id}`, { status: 'Ditolak' });
+      await api.put(`/payments/${id}`, { status: 'Ditolak' });
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -188,7 +203,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const markNotificationAsRead = async (id: string) => {
     try {
-      await axios.put(`${API_URL}/notifications/${id}`);
+      await api.put(`/notifications/${id}`);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -198,7 +213,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const checkoutTenant = async (id: string) => {
     try {
-      await axios.delete(`${API_URL}/tenants/${id}`);
+      await api.delete(`/tenants/${id}`);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -208,7 +223,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addRoom = async (room: Omit<Room, 'id'>) => {
     try {
-      await axios.post(`${API_URL}/rooms`, room);
+      await api.post(`/rooms`, room);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -218,7 +233,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateRoom = async (id: string, roomData: Partial<Room>) => {
     try {
-      await axios.put(`${API_URL}/rooms/${id}`, roomData);
+      await api.put(`/rooms/${id}`, roomData);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -228,7 +243,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const deleteRoom = async (id: string) => {
     try {
-      await axios.delete(`${API_URL}/rooms/${id}`);
+      await api.delete(`/rooms/${id}`);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -238,7 +253,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addFacility = async (facility: Omit<Facility, 'id'>) => {
     try {
-      await axios.post(`${API_URL}/facilities`, facility);
+      await api.post(`/facilities`, facility);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -248,7 +263,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateFacility = async (id: string, facilityData: Partial<Facility>) => {
     try {
-      await axios.put(`${API_URL}/facilities/${id}`, facilityData);
+      await api.put(`/facilities/${id}`, facilityData);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -258,7 +273,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   
   const deleteFacility = async (id: string) => {
     try {
-      await axios.delete(`${API_URL}/facilities/${id}`);
+      await api.delete(`/facilities/${id}`);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -268,7 +283,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (id: string, data: Partial<User>) => {
     try {
-      const res = await axios.put(`${API_URL}/users/${id}`, data);
+      const res = await api.put(`/users/${id}`, data);
       const updatedUser = res.data;
       setState(prev => ({ ...prev, currentUser: updatedUser }));
       localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -280,7 +295,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addExpense = async (expense: Omit<Expense, 'id' | 'created_at'>) => {
     try {
-      await axios.post(`${API_URL}/expenses`, expense);
+      await api.post(`/expenses`, expense);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -290,7 +305,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateExpense = async (id: string, expense: Partial<Expense>) => {
     try {
-      await axios.put(`${API_URL}/expenses/${id}`, expense);
+      await api.put(`/expenses/${id}`, expense);
       await fetchData();
     } catch (error) {
       console.error(error);
@@ -300,7 +315,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   
   const deleteExpense = async (id: string) => {
     try {
-      await axios.delete(`${API_URL}/expenses/${id}`);
+      await api.delete(`/expenses/${id}`);
       await fetchData();
     } catch (error) {
       console.error(error);

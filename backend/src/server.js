@@ -16,10 +16,22 @@ const expenseRoutes = require('./routes/expenses');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',');
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+
+// Ensure upload directories exist
+const fs = require('fs');
+['uploads/payments', 'uploads/avatars'].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
+// Serve uploads as static files
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/auth', authRoutes);

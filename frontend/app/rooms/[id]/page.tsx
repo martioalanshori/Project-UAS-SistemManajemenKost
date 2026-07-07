@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use } from 'react';
+import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,6 +32,8 @@ export default function RoomDetailPage() {
       router.push(`/login?redirect=/rooms/${room.id}`);
     } else if (currentUser.role === 'Tenant' || currentUser.role === 'Guest') {
       router.push('/tenant/applications/new?roomId=' + room.id);
+    } else if (currentUser.role === 'Admin') {
+      alert('Admin tidak dapat mengajukan sewa kamar.');
     } else {
       router.push(`/login?redirect=/rooms/${room.id}`);
     }

@@ -10,7 +10,7 @@ import { Trash2, UserCog, Edit } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import axios from 'axios';
+import api from '@/lib/api';
 import { User } from '@/types';
 
 export default function UsersManagementPage() {
@@ -19,11 +19,10 @@ export default function UsersManagementPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editForm, setEditForm] = useState({ fullname: '', email: '', phone: '', role: '', password: '' });
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API_URL}/users`);
+      const res = await api.get(`/users`);
       setUsers(res.data);
     } catch (error) {
       console.error(error);
@@ -45,7 +44,7 @@ export default function UsersManagementPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`${API_URL}/users/${id}`);
+          await api.delete(`/users/${id}`);
           setUsers(users.filter(user => user.id !== id));
           Swal.fire('Terhapus!', 'Pengguna berhasil dihapus dari sistem.', 'success');
         } catch (error) {
@@ -71,7 +70,7 @@ export default function UsersManagementPage() {
       const payload: any = { ...editForm };
       if (!payload.password) delete payload.password;
 
-      await axios.put(`${API_URL}/users/${editingUser.id}`, payload);
+      await api.put(`/users/${editingUser.id}`, payload);
       setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...payload } : u));
       setIsEditDialogOpen(false);
       Swal.fire('Berhasil!', 'Data pengguna berhasil diperbarui.', 'success');

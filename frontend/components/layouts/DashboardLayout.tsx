@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { LogOut, Menu, User, Home, Search } from 'lucide-react';
+import { LogOut, Menu, User, Home } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -27,7 +26,7 @@ interface SidebarItem {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  role: 'Admin' | 'Tenant' | 'Owner';
+  role: 'Admin' | 'Tenant';
   sidebarItems: SidebarItem[];
 }
 

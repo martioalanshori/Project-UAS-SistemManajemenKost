@@ -27,7 +27,44 @@ const adminSidebarItems = [
   { name: 'Manajemen User', href: '/admin/users', icon: <Users className="h-4 w-4" /> },
 ];
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAppContext } from '@/context/AppContext';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { state } = useAppContext();
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    
+    if (!token || !userStr) {
+      router.push('/login');
+      return;
+    }
+    
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role !== 'Admin') {
+        router.push('/');
+        return;
+      }
+      setIsAuthorized(true);
+    } catch (e) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  if (!isAuthorized) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout role="Admin" sidebarItems={adminSidebarItems}>
       {children}

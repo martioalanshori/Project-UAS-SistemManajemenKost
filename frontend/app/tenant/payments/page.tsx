@@ -21,6 +21,12 @@ export default function TenantPayments() {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({ month_for: '', amount: myRoom ? myRoom.price.toString() : '', proof_image: '' });
   
+  React.useEffect(() => {
+    if (myRoom && !formData.amount) {
+      setFormData(prev => ({ ...prev, amount: myRoom.price.toString() }));
+    }
+  }, [myRoom]);
+
   const [uploadPaymentId, setUploadPaymentId] = useState<string | null>(null);
 
   const handleSubmitNewPayment = async (e: React.FormEvent) => {
@@ -196,7 +202,7 @@ export default function TenantPayments() {
             ))}
             {myPayments.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
                   Belum ada riwayat tagihan.
                 </TableCell>
               </TableRow>

@@ -1,9 +1,10 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole } = require('../lib/middleware');
 const router = express.Router();
 
 // GET all expenses
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const expenses = await prisma.expense.findMany({
       orderBy: { expense_date: 'desc' }
@@ -16,17 +17,22 @@ router.get('/', async (req, res) => {
 });
 
 // POST new expense
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { description, category, amount, expense_date } = req.body;
     if (!description || !category || !amount || !expense_date) {
       return res.status(400).json({ error: 'All fields are required' });
     }
+    const parsedAmount = parseInt(amount);
+    if (isNaN(parsedAmount)) {
+      return res.status(400).json({ error: 'amount must be a valid number' });
+    }
+
     const expense = await prisma.expense.create({
       data: {
         description,
         category,
-        amount: parseInt(amount),
+        amount: parsedAmount,
         expense_date
       }
     });
@@ -38,14 +44,23 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update expense
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { description, category, amount, expense_date } = req.body;
     const data = {};
     if (description !== undefined) data.description = description;
     if (category !== undefined) data.category = category;
-    if (amount !== undefined) data.amount = parseInt(amount);
+    if (amount !== undefined) {
+      const parsedAmount = parseInt(amount);
+      if (isNaN(parsedAmount)) {
+        return res.status(400).json({ error: 'amount must be a valid number' });
+      }
+      data.amount = parsedAmount;
+    }
     if (expense_date !== undefined) data.expense_date = expense_date;
+
+    const existing = await prisma.expense.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Expense not found' });
 
     const expense = await prisma.expense.update({
       where: { id: req.params.id },
@@ -59,8 +74,11 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE expense
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
+    const existing = await prisma.expense.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Expense not found' });
+
     await prisma.expense.delete({
       where: { id: req.params.id }
     });

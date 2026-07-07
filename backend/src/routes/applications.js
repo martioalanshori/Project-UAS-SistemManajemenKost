@@ -1,13 +1,14 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole, userSelectFields } = require('../lib/middleware');
 
 const router = express.Router();
 
 // GET all applications
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const applications = await prisma.rentalApplication.findMany({
-      include: { user: true, room: true }
+      include: { user: { select: userSelectFields }, room: true }
     });
     res.json(applications);
   } catch (error) {
@@ -17,11 +18,11 @@ router.get('/', async (req, res) => {
 });
 
 // GET single application
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const application = await prisma.rentalApplication.findUnique({
       where: { id: req.params.id },
-      include: { user: true, room: true }
+      include: { user: { select: userSelectFields }, room: true }
     });
     if (!application) return res.status(404).json({ error: 'Application not found' });
     res.json(application);
@@ -32,7 +33,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST new application
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { user_id, room_id, start_date, duration, ktp_image } = req.body;
 
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
         ktp_image,
         status: 'Pending'
       },
-      include: { user: true, room: true }
+      include: { user: { select: userSelectFields }, room: true }
     });
     res.status(201).json(application);
   } catch (error) {
@@ -64,9 +65,16 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update application status
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { status } = req.body;
+    if (status && !['Pending', 'Approved', 'Rejected'].includes(status)) {
+      return res.status(400).json({ error: "status must be one of 'Pending', 'Approved', 'Rejected'" });
+    }
+
+    const existing = await prisma.rentalApplication.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Application not found' });
+
     const application = await prisma.rentalApplication.update({
       where: { id: req.params.id },
       data: { status }
@@ -79,8 +87,11 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE application
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
+    const existing = await prisma.rentalApplication.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Application not found' });
+
     await prisma.rentalApplication.delete({
       where: { id: req.params.id }
     });

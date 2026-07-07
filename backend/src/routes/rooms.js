@@ -1,5 +1,6 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole } = require('../lib/middleware.js');
 
 const router = express.Router();
 
@@ -32,14 +33,18 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create room
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { room_number, price, description, status, image, facilities } = req.body;
+    
+    if (!room_number || price === undefined) {
+      return res.status(400).json({ error: 'room_number and price are required' });
+    }
     
     const room = await prisma.room.create({
       data: {
         room_number,
-        price: parseInt(price),
+        price: price !== undefined ? parseInt(price) : 0,
         description,
         status,
         image: image || '/img/kamar1.jpg',
@@ -57,7 +62,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update room
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     const { room_number, price, description, status, image, facilities } = req.body;
     
@@ -68,7 +73,7 @@ router.put('/:id', async (req, res) => {
       where: { id: req.params.id },
       data: {
         room_number,
-        price: price ? parseInt(price) : undefined,
+        price: price !== undefined ? parseInt(price) : undefined,
         description,
         status,
         image,
@@ -86,7 +91,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE room
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRole('Admin'), async (req, res) => {
   try {
     await prisma.room.delete({
       where: { id: req.params.id }

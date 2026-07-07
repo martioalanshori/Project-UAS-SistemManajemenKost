@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
+const { authenticateToken } = require('../lib/middleware');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
@@ -13,12 +14,12 @@ router.post('/login', async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return res.status(401).json({ error: 'User tidak ditemukan' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(401).json({ error: 'Password salah' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
@@ -43,6 +44,10 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
   const { fullname, email, phone, password } = req.body;
 
+  if (!password) {
+    return res.status(400).json({ error: 'Password is required' });
+  }
+
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -55,7 +60,7 @@ router.post('/register', async (req, res) => {
         fullname,
         email,
         phone,
-        password: await bcrypt.hash(password || 'defaultpass', 10),
+        password: await bcrypt.hash(password, 10),
         role: 'Tenant'
       }
     });

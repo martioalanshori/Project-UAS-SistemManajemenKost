@@ -10,8 +10,9 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { ChevronLeft } from 'lucide-react';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, currentUser } = useAppContext();
@@ -105,5 +106,13 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

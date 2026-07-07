@@ -1,13 +1,14 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
+const { authenticateToken, authorizeRole, userSelectFields } = require('../lib/middleware');
 
 const router = express.Router();
 
 // GET all payments
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const payments = await prisma.payment.findMany({
-      include: { tenant: { include: { user: true, room: true } } }
+      include: { tenant: { include: { user: { select: userSelectFields }, room: true } } }
     });
     res.json(payments);
   } catch (error) {
@@ -17,7 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST create payment (upload proof)
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { tenant_id, amount, month_for, proof_image } = req.body;
 
@@ -54,13 +55,21 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update payment (status, proof_image, payment_date)
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { status, proof_image, payment_date } = req.body;
     const data = {};
-    if (status !== undefined) data.status = status;
+    if (status !== undefined) {
+      if (!['Belum Bayar', 'Menunggu Verifikasi', 'Lunas', 'Ditolak'].includes(status)) {
+        return res.status(400).json({ error: "status must be one of 'Belum Bayar', 'Menunggu Verifikasi', 'Lunas', 'Ditolak'" });
+      }
+      data.status = status;
+    }
     if (proof_image !== undefined) data.proof_image = proof_image;
     if (payment_date !== undefined) data.payment_date = payment_date;
+
+    const existing = await prisma.payment.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Payment not found' });
 
     const payment = await prisma.payment.update({
       where: { id: req.params.id },
@@ -74,8 +83,11 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE payment
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
+    const existing = await prisma.payment.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ error: 'Payment not found' });
+
     await prisma.payment.delete({
       where: { id: req.params.id }
     });
