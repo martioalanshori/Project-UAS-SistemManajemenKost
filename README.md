@@ -2,7 +2,7 @@
 
 Kost Management System adalah aplikasi berbasis web yang dirancang untuk membantu pemilik/admin dalam mengelola operasional kos secara digital, sekaligus memudahkan penyewa dalam melakukan pengajuan sewa, pembayaran tagihan, serta memperoleh informasi terkait tempat tinggalnya.
 
-Sistem ini dibangun menggunakan arsitektur modern dengan **Next.js** sebagai frontend, **Express.js** sebagai backend REST API, **Prisma ORM** sebagai ORM, dan **MySQL** sebagai database utama.
+Sistem ini dibangun menggunakan arsitektur modern dengan **Next.js** sebagai frontend, **Express.js** sebagai backend REST API, **Prisma ORM** sebagai ORM, dan **PostgreSQL** sebagai database utama.
 
 ---
 
@@ -93,7 +93,7 @@ Sistem ini dibangun menggunakan arsitektur modern dengan **Next.js** sebagai fro
 
 ## Database
 
-- MySQL
+- PostgreSQL
 
 ---
 
@@ -139,9 +139,9 @@ cd kost-management-system
 
 ---
 
-# ⚙️ Setup Database (MySQL)
+# ⚙️ Setup Database (PostgreSQL)
 
-Pastikan MySQL Server sudah berjalan.
+Pastikan PostgreSQL Server sudah berjalan.
 
 Buat database baru.
 
@@ -168,17 +168,17 @@ npm install
 Buat file `.env`.
 
 ```env
-DATABASE_URL="mysql://root:password@localhost:3306/kost_management"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/kost_management"
 JWT_SECRET=your_secret_key
 PORT=5000
 ```
 
 > **Catatan**
 >
-> Jika menggunakan XAMPP/Laragon dengan user `root` tanpa password:
+> Sesuaikan `postgres` dan `password` dengan username dan password database PostgreSQL Anda.
 >
 > ```env
-> DATABASE_URL="mysql://root:@localhost:3306/kost_management"
+> DATABASE_URL="postgresql://postgres:password@localhost:5432/kost_management"
 > ```
 
 Sinkronisasi database menggunakan Prisma.
@@ -348,7 +348,7 @@ Backend (Express.js)
         │
    Prisma ORM
         │
-     MySQL Database
+     PostgreSQL Database
 ```
 
 ---
