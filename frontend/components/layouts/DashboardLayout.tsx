@@ -45,8 +45,8 @@ export function DashboardLayout({ children, role, sidebarItems }: DashboardLayou
     <div className="flex h-full flex-col">
       <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Home className="h-6 w-6" />
-          <span className="">Kost {role}</span>
+          <img src="/img/logo.png" alt="Papakos Logo" className="h-6 w-auto object-contain" />
+          <span className="">Papakos {role}</span>
         </Link>
       </div>
       <div className="flex-1 overflow-auto py-2">

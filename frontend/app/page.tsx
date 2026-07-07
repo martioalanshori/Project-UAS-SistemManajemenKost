@@ -31,16 +31,22 @@ export default function LandingPage() {
       {/* Header Sticky */}
       <header className="fixed top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b px-6 h-[80px] flex items-center justify-between transition-all duration-300">
         <Link className="flex items-center gap-2" href="/">
-          <div className="bg-primary text-white p-2 rounded-xl">
-            <MapPin className="h-5 w-5" />
-          </div>
-          <span className="font-bold text-xl text-primary tracking-tight">Sistem Kost</span>
+          <img src="/img/logo.png" alt="Papakos Logo" className="h-10 w-auto object-contain" />
+          <span className="font-bold text-xl text-primary tracking-tight">Papakos</span>
         </Link>
 
         <div className="flex items-center gap-4">
-          <Link href="/rooms" className="hidden sm:block text-sm font-medium hover:bg-muted py-2 px-4 rounded-full transition-colors">
-            Cari Kamar
-          </Link>
+          <div className="hidden sm:flex items-center gap-6 mr-4">
+            <Link href="/rooms" className="relative text-sm font-medium py-1 transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-green-500 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">
+              Cari Kamar
+            </Link>
+            <Link href="/terms" className="relative text-sm font-medium py-1 transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-green-500 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">
+              Syarat dan Ketentuan
+            </Link>
+            <Link href="/help" className="relative text-sm font-medium py-1 transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-green-500 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">
+              Pusat Bantuan
+            </Link>
+          </div>
           {currentUser ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
@@ -83,7 +89,7 @@ export default function LandingPage() {
 
       <main className="flex-1 mt-[80px]">
         {/* Hero Section */}
-        <section className="relative w-full h-[600px] flex flex-col items-center justify-center px-4">
+        <section className="relative w-full h-[350px] flex flex-col items-center justify-center px-4">
           {/* Background Image */}
           <div className="absolute inset-0 z-0 bg-primary/20">
             <img 
@@ -141,11 +147,11 @@ export default function LandingPage() {
 
       <footer className="w-full bg-muted/30 py-8 border-t mt-auto">
         <div className="container mx-auto px-6 max-w-7xl flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">© 2024 Sistem Manajemen Kost. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Muhammad Martio Al Anshori. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link className="text-sm text-muted-foreground hover:underline" href="#">Privasi</Link>
-            <Link className="text-sm text-muted-foreground hover:underline" href="#">Syarat</Link>
-            <Link className="text-sm text-muted-foreground hover:underline" href="#">Peta Situs</Link>
+            <Link className="text-sm text-muted-foreground hover:underline" href="/privacy">Privasi</Link>
+            <Link className="text-sm text-muted-foreground hover:underline" href="/terms">Syarat</Link>
+            <Link className="text-sm text-muted-foreground hover:underline" href="/sitemap">Peta Situs</Link>
           </div>
         </div>
       </footer>

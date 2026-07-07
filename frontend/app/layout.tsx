@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Sistem Manajemen Kost",
-  description: "Aplikasi manajemen kost berbasis web",
+  title: "Papakos - Sistem Manajemen Kost",
+  description: "Aplikasi manajemen kost komprehensif",
 };
 
 export default function RootLayout({
