@@ -1,364 +1,358 @@
-# Kost Management System
+<p align="center">
+  <img src="frontend/app/icon.png" alt="Papakos Logo" width="80" />
+</p>
 
-Kost Management System adalah aplikasi berbasis web yang dirancang untuk membantu pemilik/admin dalam mengelola operasional kos secara digital, sekaligus memudahkan penyewa dalam melakukan pengajuan sewa, pembayaran tagihan, serta memperoleh informasi terkait tempat tinggalnya.
+<h1 align="center">🏠 Papakos — Sistem Manajemen Kost</h1>
 
-Sistem ini dibangun menggunakan arsitektur modern dengan **Next.js** sebagai frontend, **Express.js** sebagai backend REST API, **Prisma ORM** sebagai ORM, dan **PostgreSQL** sebagai database utama.
+<p align="center">
+  Aplikasi web full-stack untuk mengelola operasional rumah kost secara digital, mulai dari manajemen kamar, penyewaan, pembayaran, hingga laporan keuangan.
+</p>
 
----
-
-# 🌟 Fitur Utama
-
-## Untuk Admin
-
-- **Dashboard Cerdas**
-  - Ringkasan jumlah kamar.
-  - Statistik penyewa aktif.
-  - Total pendapatan.
-  - Total pengeluaran.
-  - Perhitungan **Laba Bersih** secara otomatis.
-  - Grafik statistik menggunakan Recharts.
-
-- **Manajemen Kamar**
-  - Tambah kamar.
-  - Edit data kamar.
-  - Hapus kamar.
-  - Mengatur status kamar (tersedia/terisi).
-
-- **Manajemen Fasilitas**
-  - Menambah fasilitas.
-  - Mengubah fasilitas.
-  - Menghapus fasilitas.
-
-- **Manajemen Pengajuan**
-  - Melihat pengajuan penyewa.
-  - Menyetujui pengajuan.
-  - Menolak pengajuan.
-
-- **Manajemen Penyewa**
-  - Melihat daftar penghuni.
-  - Mengelola data penyewa.
-
-- **Manajemen Pembayaran**
-  - Verifikasi bukti pembayaran.
-  - Mengubah status pembayaran.
-
-- **Laporan Keuangan**
-  - Mencatat pengeluaran.
-  - Mengelola biaya listrik.
-  - Mengelola biaya air.
-  - Mengelola biaya perawatan.
-  - Menghasilkan laba bersih.
-
-- **Manajemen Pengguna**
-  - Mengelola akun pengguna.
-  - Mengubah role pengguna.
-  - Menghapus akun pengguna.
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Express.js-4-green?logo=express" alt="Express" />
+  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/TailwindCSS-4-06B6D4?logo=tailwindcss" alt="TailwindCSS" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License" />
+</p>
 
 ---
 
-## Untuk Penyewa (Tenant)
+## 📖 Deskripsi
 
-- Dashboard penyewa.
-- Melihat daftar kamar yang tersedia.
-- Detail kamar beserta fasilitas.
-- Mengajukan penyewaan kamar.
-- Upload bukti pembayaran bulanan.
-- Melihat status pembayaran.
-- Notifikasi.
-- Mengubah profil.
-- Mengubah password.
-- Mengunggah foto profil.
+**Papakos** adalah aplikasi web full-stack yang dirancang untuk memudahkan pengelolaan rumah kost (boarding house). Aplikasi ini menyediakan dua panel utama:
+
+- **Panel Admin** — Dashboard lengkap untuk pemilik kost dalam mengelola kamar, fasilitas, pengajuan sewa, penghuni, pembayaran, pengeluaran, laporan keuangan, notifikasi, dan manajemen user.
+- **Panel Tenant (Penyewa)** — Dashboard khusus penghuni untuk melihat informasi kamar, mengajukan sewa, mengelola pembayaran, dan mengatur profil.
+
+Selain itu, terdapat **halaman publik (landing page)** yang memungkinkan calon penyewa melihat daftar kamar yang tersedia, mencari kamar berdasarkan fasilitas, serta melakukan registrasi dan login.
 
 ---
 
-# 🛠️ Teknologi yang Digunakan
+## ✨ Fitur Utama
 
-## Frontend
+### 🌐 Halaman Publik
+- Landing page dengan pencarian kamar
+- Daftar kamar dengan filter fasilitas (AC, WiFi, Dapur, Parkir)
+- Halaman detail kamar
+- Registrasi & Login
+- Halaman Syarat & Ketentuan, Pusat Bantuan, Kebijakan Privasi
 
-- Next.js
-- React.js
-- Tailwind CSS
-- Shadcn UI
-- Radix UI
-- Axios
-- Recharts
-- SweetAlert2
+### 👨‍💼 Panel Admin
+| Modul | Fitur |
+|---|---|
+| **Dashboard** | Ringkasan pendapatan, pengeluaran, laba bersih, grafik pendapatan, aktivitas terbaru |
+| **Kamar** | CRUD kamar, kelola status (Kosong/Terisi/Dipesan), upload gambar kamar |
+| **Fasilitas** | CRUD fasilitas yang tersedia untuk kamar |
+| **Pengajuan** | Kelola pengajuan sewa (Approve/Reject), review KTP |
+| **Penghuni** | Data penghuni aktif, riwayat penyewaan |
+| **Pembayaran** | Verifikasi pembayaran penghuni, lihat bukti transfer |
+| **Pengeluaran** | Catat pengeluaran operasional (Listrik, Air, WiFi, Kebersihan, dll.) |
+| **Laporan** | Laporan keuangan dengan grafik, ekspor ke PDF & Excel |
+| **Notifikasi** | Sistem notifikasi untuk admin |
+| **Manajemen User** | Kelola data user (Admin & Tenant) |
 
-## Backend
-
-- Node.js
-- Express.js
-- Prisma ORM
-- bcrypt
-
-## Database
-
-- PostgreSQL
+### 🧑‍🤝‍🧑 Panel Tenant (Penyewa)
+| Modul | Fitur |
+|---|---|
+| **Dashboard** | Info kamar saat ini, fasilitas, status penyewaan, notifikasi terbaru |
+| **Pengajuan Saya** | Riwayat pengajuan sewa kamar |
+| **Pembayaran** | Upload bukti pembayaran, riwayat pembayaran bulanan |
+| **Profil** | Edit profil dan avatar |
 
 ---
 
-# 📁 Struktur Proyek
+## 🛠️ Tech Stack
+
+### Frontend
+| Teknologi | Keterangan |
+|---|---|
+| [Next.js 16](https://nextjs.org/) | React framework dengan App Router |
+| [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript |
+| [TailwindCSS 4](https://tailwindcss.com/) | Utility-first CSS framework |
+| [shadcn/ui](https://ui.shadcn.com/) | Komponen UI modern |
+| [Recharts](https://recharts.org/) | Library grafik/chart |
+| [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) | Form handling & validasi |
+| [Axios](https://axios-http.com/) | HTTP client |
+| [Lucide React](https://lucide.dev/) | Icon library |
+| [jsPDF](https://github.com/parallax/jsPDF) + [SheetJS](https://sheetjs.com/) | Ekspor PDF & Excel |
+| [SweetAlert2](https://sweetalert2.github.io/) + [Sonner](https://sonner.emilkowal.dev/) | Notifikasi & alert |
+
+### Backend
+| Teknologi | Keterangan |
+|---|---|
+| [Express.js 4](https://expressjs.com/) | Node.js web framework |
+| [Prisma ORM](https://www.prisma.io/) | Database ORM modern |
+| [PostgreSQL](https://www.postgresql.org/) | Relational database |
+| [JWT](https://jwt.io/) | Autentikasi berbasis token |
+| [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | Hashing password |
+| [Multer](https://github.com/expressjs/multer) | Upload file/gambar |
+| [Helmet](https://helmetjs.github.io/) | HTTP security headers |
+
+---
+
+## 📸 Screenshot
+
+### Halaman Publik
+
+#### Landing Page
+![Landing Page](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.45.04.png)
+
+#### Daftar Kamar & Filter Fasilitas
+![Daftar Kamar](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.45.09.png)
+
+#### Halaman Login
+![Login](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.51.13.png)
+
+#### Halaman Registrasi
+![Register](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.51.17.png)
+
+---
+
+### Panel Admin
+
+#### Dashboard Admin
+![Dashboard Admin](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.57.19.png)
+
+#### Manajemen Kamar
+![Manajemen Kamar](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.57.22.png)
+
+#### Manajemen Pengajuan Sewa
+![Manajemen Pengajuan](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.57.28.png)
+
+#### Manajemen Pembayaran
+![Manajemen Pembayaran](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.57.32.png)
+
+#### Laporan Keuangan
+![Laporan Keuangan](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.57.37.png)
+
+---
+
+### Panel Tenant (Penyewa)
+
+#### Dashboard Penyewa
+![Dashboard Penyewa](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.58.39.png)
+
+#### Riwayat Pembayaran
+![Riwayat Pembayaran](screenshot/Tangkapan%20Layar%202026-07-07%20pada%2011.58.46.png)
+
+---
+
+## 📂 Struktur Proyek
 
 ```
-kost-management-system/
-│
-├── backend/
+Project-UAS-SistemManajemenKost/
+├── backend/                    # Backend API (Express.js)
 │   ├── prisma/
-│   ├── routes/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── uploads/
-│   ├── package.json
-│   └── .env
+│   │   ├── schema.prisma       # Skema database
+│   │   ├── migrations/         # File migrasi database
+│   │   └── seed.js             # Data seeder
+│   ├── src/
+│   │   ├── server.js           # Entry point server
+│   │   ├── routes/             # API routes
+│   │   │   ├── auth.js         # Autentikasi (login/register)
+│   │   │   ├── rooms.js        # CRUD kamar
+│   │   │   ├── facilities.js   # CRUD fasilitas
+│   │   │   ├── applications.js # Pengajuan sewa
+│   │   │   ├── tenants.js      # Data penghuni
+│   │   │   ├── payments.js     # Pembayaran
+│   │   │   ├── expenses.js     # Pengeluaran
+│   │   │   ├── notifications.js# Notifikasi
+│   │   │   └── users.js        # Manajemen user
+│   │   └── lib/                # Helper & middleware
+│   └── uploads/                # File upload (gambar)
 │
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── public/
-│   ├── package.json
-│   └── ...
+├── frontend/                   # Frontend (Next.js)
+│   ├── app/                    # App Router pages
+│   │   ├── page.tsx            # Landing page
+│   │   ├── login/              # Halaman login
+│   │   ├── register/           # Halaman registrasi
+│   │   ├── rooms/              # Halaman daftar kamar
+│   │   ├── admin/              # Panel Admin
+│   │   │   ├── dashboard/
+│   │   │   ├── rooms/
+│   │   │   ├── facilities/
+│   │   │   ├── applications/
+│   │   │   ├── tenants/
+│   │   │   ├── payments/
+│   │   │   ├── expenses/
+│   │   │   ├── reports/
+│   │   │   ├── notifications/
+│   │   │   └── users/
+│   │   └── tenant/             # Panel Penyewa
+│   │       ├── dashboard/
+│   │       ├── applications/
+│   │       ├── payments/
+│   │       └── profile/
+│   ├── components/             # Komponen UI
+│   │   ├── ui/                 # shadcn/ui components
+│   │   └── layouts/            # Layout components
+│   ├── context/                # React context (auth, etc.)
+│   ├── lib/                    # Utility functions
+│   └── types/                  # TypeScript types
 │
-└── README.md
+├── screenshot/                 # Screenshot aplikasi
+└── LICENSE                     # MIT License
 ```
 
 ---
 
-# 🚀 Instalasi
+## 🗃️ Database Schema
 
-## 1. Clone Repository
+Aplikasi menggunakan **PostgreSQL** dengan **Prisma ORM**. Berikut model-model utama:
 
-```bash
-git clone https://github.com/username/kost-management-system.git
+```
+User ──────────┬── RentalApplication ──── Tenant ──── Payment
+               │
+Room ──────────┘
+  │
+Facility (many-to-many)
+
+Notification ── User
+Expense (standalone)
 ```
 
-Masuk ke folder project.
-
-```bash
-cd kost-management-system
-```
+| Model | Deskripsi |
+|---|---|
+| `User` | Data pengguna (Admin & Tenant) |
+| `Room` | Data kamar kost beserta harga dan status |
+| `Facility` | Fasilitas kamar (AC, WiFi, dll.) — relasi many-to-many dengan Room |
+| `RentalApplication` | Pengajuan sewa kamar oleh penyewa |
+| `Tenant` | Data penghuni aktif yang sudah di-approve |
+| `Payment` | Riwayat pembayaran bulanan penghuni |
+| `Notification` | Notifikasi untuk user |
+| `Expense` | Pencatatan pengeluaran operasional kost |
 
 ---
 
-# ⚙️ Setup Database (PostgreSQL)
+## 🚀 Instalasi & Menjalankan Aplikasi
 
-Pastikan PostgreSQL Server sudah berjalan.
+### Prasyarat
 
-Buat database baru.
+Pastikan sudah terinstall:
+- [Node.js](https://nodejs.org/) (v18 atau lebih baru)
+- [PostgreSQL](https://www.postgresql.org/) (v14 atau lebih baru)
+- [Git](https://git-scm.com/)
 
-```sql
-CREATE DATABASE kost_management;
-```
-
----
-
-# ⚙️ Setup Backend
-
-Masuk ke folder backend.
+### 1. Clone Repository
 
 ```bash
+git clone https://github.com/username/Project-UAS-SistemManajemenKost.git
+cd Project-UAS-SistemManajemenKost
+```
+
+### 2. Setup Backend
+
+```bash
+# Masuk ke folder backend
 cd backend
-```
 
-Install dependency.
-
-```bash
+# Install dependencies
 npm install
+
+# Buat file .env (sesuaikan dengan konfigurasi lokal)
+# Isi file .env:
 ```
 
-Buat file `.env`.
+Buat file `.env` di folder `backend/` dengan isi:
 
 ```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/kost_management"
-JWT_SECRET=your_secret_key
+DATABASE_URL="postgresql://username:password@localhost:5432/papakos_db"
+JWT_SECRET=your-secret-key-here
 PORT=5000
+CORS_ORIGIN=http://localhost:3000
 ```
 
-> **Catatan**
->
-> Sesuaikan `postgres` dan `password` dengan username dan password database PostgreSQL Anda.
->
-> ```env
-> DATABASE_URL="postgresql://postgres:password@localhost:5432/kost_management"
-> ```
-
-Sinkronisasi database menggunakan Prisma.
+> ⚠️ **Penting:** Ganti `username`, `password`, dan `your-secret-key-here` dengan value milikmu sendiri.
 
 ```bash
-npx prisma db push
-```
+# Jalankan migrasi database
+npx prisma migrate dev
 
-Generate Prisma Client.
+# (Opsional) Jalankan seeder untuk data dummy
+npx prisma db seed
 
-```bash
-npx prisma generate
-```
-
-Jalankan backend.
-
-```bash
+# Jalankan backend server
 npm run dev
 ```
 
-Backend berjalan pada:
+Backend akan berjalan di `http://localhost:5000`
 
-```
-http://localhost:5000
-```
-
----
-
-# 💻 Setup Frontend
-
-Buka terminal baru.
-
-Masuk ke folder frontend.
+### 3. Setup Frontend
 
 ```bash
+# Buka terminal baru, masuk ke folder frontend
 cd frontend
-```
 
-Install dependency.
-
-```bash
+# Install dependencies
 npm install
+
+# Buat file .env.local
 ```
 
-Jalankan aplikasi.
+Buat file `.env.local` di folder `frontend/` dengan isi:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
 ```bash
+# Jalankan frontend development server
 npm run dev
 ```
 
-Frontend berjalan pada:
+Frontend akan berjalan di `http://localhost:3000`
 
-```
-http://localhost:3000
-```
+### 4. Akses Aplikasi
 
----
+Buka browser dan akses `http://localhost:3000`
 
-# 🔐 Akun Admin
+#### Akun Default (setelah seeding)
 
-Saat pertama kali dijalankan, sistem belum memiliki akun Admin.
-
-Langkah-langkah:
-
-1. Registrasi akun melalui halaman Register.
-2. Jalankan Prisma Studio.
-
-```bash
-cd backend
-npx prisma studio
-```
-
-3. Buka tabel **User**.
-4. Ubah nilai field:
-
-```
-role
-```
-
-dari
-
-```
-Tenant
-```
-
-menjadi
-
-```
-Admin
-```
-
-Kemudian login kembali menggunakan akun tersebut.
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@kost.com` | `admin123` |
+| Tenant | `budi@gmail.com` | `password` |
 
 ---
 
-# 🗄️ Prisma Commands
+## 📡 API Endpoints
 
-Generate Prisma Client.
-
-```bash
-npx prisma generate
-```
-
-Sinkronisasi schema ke database.
-
-```bash
-npx prisma db push
-```
-
-Membuka Prisma Studio.
-
-```bash
-npx prisma studio
-```
-
-Reset database.
-
-```bash
-npx prisma migrate reset
-```
+| Prefix | Deskripsi |
+|---|---|
+| `POST /api/auth/login` | Login user |
+| `POST /api/auth/register` | Register user baru |
+| `GET/POST/PUT/DELETE /api/rooms` | CRUD kamar |
+| `GET/POST/PUT/DELETE /api/facilities` | CRUD fasilitas |
+| `GET/POST/PUT /api/applications` | Kelola pengajuan sewa |
+| `GET/POST/PUT /api/tenants` | Kelola data penghuni |
+| `GET/POST/PUT /api/payments` | Kelola pembayaran |
+| `GET/POST/PUT/DELETE /api/expenses` | Kelola pengeluaran |
+| `GET/POST /api/notifications` | Kelola notifikasi |
+| `GET/PUT/DELETE /api/users` | Manajemen user |
 
 ---
 
-# 📊 Modul Sistem
+## 🔐 Keamanan
 
-### Admin
-
-- Dashboard
-- Manajemen Kamar
-- Manajemen Fasilitas
-- Manajemen Penyewa
-- Manajemen Pengajuan
-- Manajemen Pembayaran
-- Manajemen Pengeluaran
-- Manajemen User
-- Profil
-
-### Tenant
-
-- Dashboard
-- Daftar Kamar
-- Detail Kamar
-- Pengajuan Sewa
-- Pembayaran
-- Notifikasi
-- Profil
-
----
-
-# 🔒 Keamanan
-
-- Password disimpan menggunakan **bcrypt hashing**.
-- Validasi data dilakukan pada sisi backend.
-- Role Based Access Control (RBAC) untuk Admin dan Tenant.
-- Prisma ORM digunakan untuk meminimalkan risiko SQL Injection.
-
----
-
-# 📈 Arsitektur
-
-```
-Frontend (Next.js)
-        │
-     Axios API
-        │
-Backend (Express.js)
-        │
-   Prisma ORM
-        │
-     PostgreSQL Database
-```
-
----
-
-# 👨‍💻 Pengembang
-
-Aplikasi ini dikembangkan sebagai sistem informasi manajemen kos berbasis web untuk membantu digitalisasi proses administrasi, pengelolaan kamar, penyewa, pembayaran, serta laporan keuangan secara efektif dan efisien.
+- **JWT Authentication** — Token-based auth untuk setiap request API
+- **bcrypt** — Password hashing dengan salt rounds
+- **Helmet** — HTTP security headers
+- **CORS** — Konfigurasi origin yang diizinkan
+- **Express Validator** — Validasi input pada backend
+- **Zod** — Validasi form pada frontend
 
 ---
 
 ## 📄 Lisensi
 
-Project ini dibuat untuk kebutuhan pembelajaran, pengembangan, dan portofolio.
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+**Copyright © 2026 Muhammad Martio Al Anshori**
+
+---
+
+<p align="center">
+  Dibuat dengan ❤️ untuk UAS Pemrograman Web
+</p>
