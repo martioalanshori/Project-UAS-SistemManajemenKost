@@ -160,17 +160,17 @@ function RoomsContent() {
                 <Label>Rentang Harga (Per Bulan)</Label>
                 <div className="flex items-center gap-2">
                   <Input 
-                    type="number" 
+                    type="text" 
                     placeholder="Min (Rp)" 
-                    value={minPrice}
-                    onChange={(e) => setMinPrice(e.target.value)}
+                    value={minPrice ? `Rp ${parseInt(minPrice.replace(/[^0-9]/g, '') || '0').toLocaleString('id-ID')}` : ''}
+                    onChange={(e) => setMinPrice(e.target.value.replace(/[^0-9]/g, ''))}
                   />
                   <span>-</span>
                   <Input 
-                    type="number" 
+                    type="text" 
                     placeholder="Max (Rp)" 
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(e.target.value)}
+                    value={maxPrice ? `Rp ${parseInt(maxPrice.replace(/[^0-9]/g, '') || '0').toLocaleString('id-ID')}` : ''}
+                    onChange={(e) => setMaxPrice(e.target.value.replace(/[^0-9]/g, ''))}
                   />
                 </div>
               </div>

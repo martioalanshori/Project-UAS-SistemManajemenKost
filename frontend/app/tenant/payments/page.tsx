@@ -122,12 +122,12 @@ export default function TenantPayments() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Jumlah Nominal (Rp)</Label>
+                  <Label>Jumlah Nominal</Label>
                   <Input 
                     required
-                    type="number"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                    type="text"
+                    value={formData.amount ? `Rp ${parseInt(formData.amount.replace(/[^0-9]/g, '') || '0').toLocaleString('id-ID')}` : ''}
+                    onChange={(e) => setFormData({...formData, amount: e.target.value.replace(/[^0-9]/g, '')})}
                   />
                 </div>
                 <div className="space-y-2">

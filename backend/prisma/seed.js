@@ -40,30 +40,21 @@ async function main() {
   });
 
   // 3. Create Rooms
-  const room1 = await prisma.room.upsert({
-    where: { room_number: '101' },
-    update: {},
-    create: {
-      room_number: '101',
-      price: 1500000,
-      description: 'Kamar luas di lantai 1 dengan pencahayaan alami yang baik.',
-      status: 'Terisi',
-      image: '/img/kamar1.jpg',
-      facilities: { connect: facilityIds.slice(0, 5) }
-    }
-  });
-  const room2 = await prisma.room.upsert({
-    where: { room_number: '102' },
-    update: {},
-    create: {
-      room_number: '102',
-      price: 1500000,
-      description: 'Kamar strategis dekat tangga utama.',
-      status: 'Kosong',
-      image: '/img/kamar2.jpg',
-      facilities: { connect: facilityIds.slice(0, 5) }
-    }
-  });
+  for (let i = 1; i <= 8; i++) {
+    const roomNum = `10${i}`;
+    await prisma.room.upsert({
+      where: { room_number: roomNum },
+      update: {},
+      create: {
+        room_number: roomNum,
+        price: 1500000,
+        description: `Kamar strategis nomor ${roomNum}.`,
+        status: i === 1 ? 'Terisi' : 'Kosong',
+        image: `/img/kamar${i}.jpg`,
+        facilities: { connect: facilityIds.slice(0, 5) }
+      }
+    });
+  }
 
   console.log('Seeding finished.');
 

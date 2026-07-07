@@ -141,13 +141,13 @@ export default function AdminRooms() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Harga per Bulan (Rp)</Label>
+                <Label>Harga per Bulan</Label>
                 <Input 
                   required
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  placeholder="Misal: 1500000"
+                  type="text"
+                  value={formData.price ? `Rp ${parseInt(formData.price.replace(/[^0-9]/g, '') || '0').toLocaleString('id-ID')}` : ''}
+                  onChange={(e) => setFormData({...formData, price: e.target.value.replace(/[^0-9]/g, '')})}
+                  placeholder="Misal: Rp 1.500.000"
                 />
               </div>
               <div className="space-y-2">
