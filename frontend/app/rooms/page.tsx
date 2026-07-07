@@ -141,9 +141,9 @@ function RoomsContent() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2 border rounded-full p-1 pl-3 hover:shadow-md transition-shadow cursor-pointer bg-white">
-              <Link href="/login" className="text-sm font-medium px-2">Login</Link>
-              <div className="bg-primary/10 text-primary p-2 rounded-full">
+            <div className="group flex items-center gap-2 border rounded-full p-1 pl-3 hover:shadow-md hover:bg-green-500 hover:text-white transition-all cursor-pointer bg-white">
+              <Link href="/login" className="text-sm font-medium px-2 group-hover:text-white">Masuk</Link>
+              <div className="bg-primary/10 text-primary p-2 rounded-full group-hover:bg-green-600 group-hover:text-white transition-all">
                 <Users className="h-4 w-4" />
               </div>
             </div>
